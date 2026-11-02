@@ -1,50 +1,27 @@
-
 from collections import deque
 
-# Grid: 0 = free cell, 1 = obstacle
 grid = [
-    [0, 1, 0],
-    [0, 0, 0],
-    [1, 0, 0]
+    ['S', '.', '#'],
+    ['#', '.', '.'],
+    ['.', '.', 'G']
 ]
 
-# Starting and goal positions
-start = (0, 0)
-goal = (2, 2)
+q = deque([[(0, 0)]])
+visited = [(0, 0)]
 
-# Queue stores positions and their paths
-queue = deque([(start, [start])])
+while q:
+    path = q.popleft()
+    r, c = path[-1]
 
-# Store visited positions
-visited = {start}
-
-# BFS algorithm
-while queue:
-    position, path = queue.popleft()
-
-    # Check if goal is reached
-    if position == goal:
-        print("Path found:", path)
+    if grid[r][c] == 'G':
+        print("Path:", path)
         print("Steps:", len(path) - 1)
         break
 
-    r, c = position
-
-    # Move down, up, right, and left
-    for dr, dc in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
-        nr, nc = r + dr, c + dc
-        next_pos = (nr, nc)
-
-        # Check boundaries and obstacles
-        if (0 <= nr < 3 and 0 <= nc < 3
-                and grid[nr][nc] == 0
-                and next_pos not in visited):
-
-            # Mark position as visited
-            visited.add(next_pos)
-
-            # Add new position and path to queue
-            queue.append((next_pos, path + [next_pos]))
-
+    for nr, nc in [(r+1,c), (r,c+1), (r-1,c), (r,c-1)]:
+        if (0 <= nr < 3 and 0 <= nc < 3 and grid[nr][nc] != '#'
+            and (nr,nc) not in visited):
+            visited.append((nr,nc))
+            q.append(path + [(nr,nc)])
 else:
-    print("No path found!")
+    print("No path exists")
